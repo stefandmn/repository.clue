@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<addon id="repository.clue" version="1.0.6" name="Clue Repository" provider-name="AMSD">
+	<requires>
+		<import addon="xbmc.addon" version="12.0.0"/>
+	</requires>
+	<extension point="xbmc.addon.repository">
+		<info>http://amsd.go.ro/clue/mcrep/addons.xml</info>
+		<checksum>http://amsd.go.ro/clue/mcrep/addons.xml.md5</checksum>
+		<datadir>http://amsd.go.ro/clue/mcrep</datadir>
+		<hashes>true</hashes>
+	</extension>
+	<extension point="xbmc.addon.metadata">
+		<summary lang="en">Clue MCPi Repository</summary>
+		<description lang="en">Clue Repository add-on is the default location to download and install add-ons of MCPi distribution</description>
+	</extension>
+</addon>

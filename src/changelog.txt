@@ -1,0 +1,9 @@
+v1.0
+- Update resources and references
+- Update addon version to be compliant wit Kodi 15 and 16
+- Apply changes for Kodi compatibility
+- Addon icon has been changed (rebranding)
+- Initiate new Clue repository located to amsd.go.ro/clue/mcrep
+- Replicate Clue logo as icon for this family's plugins
+- Translate metadata in English, German, French and Romanian
+- Create physical repository and related resources to maintain it
