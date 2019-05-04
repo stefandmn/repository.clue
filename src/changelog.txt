@@ -1,4 +1,4 @@
-v1.0
+v1.4
 - Update resources and references
 - Update addon version to be compliant wit Kodi 15 and 16
 - Apply changes for Kodi compatibility

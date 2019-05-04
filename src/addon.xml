@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<addon id="repository.clue" version="1.0.6" name="Clue Repository" provider-name="AMSD">
+<addon id="repository.clue" version="1.4.3" name="Clue Repository" provider-name="AMSD">
 	<requires>
 		<import addon="xbmc.addon" version="12.0.0"/>
 	</requires>
