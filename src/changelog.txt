@@ -1,6 +1,10 @@
+v2.0
+- Update addon version to be compliant with Kodi 17+
+- Change default location (the new target is amsd.go.ro/clue/repos/addons)
+
 v1.4
 - Update resources and references
-- Update addon version to be compliant wit Kodi 15 and 16
+- Update addon version to be compliant with Kodi 15 and 16
 - Apply changes for Kodi compatibility
 - Addon icon has been changed (rebranding)
 - Initiate new Clue repository located to amsd.go.ro/clue/mcrep
