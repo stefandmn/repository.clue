@@ -1,5 +1,6 @@
-# Clue Repository for MCPi
+# Clue Repository
 
-**Clue Repository** add-on is the default location to download and install add-ons 
-of __MCPi__ distribution.
+The **Clue** add-on repository contains Kodi programs, services, skins, and many others addons. 
+This repository is the default location to download and install addons for Clue distribution, 
+and all of them are maintained and supported by AMSD.
 
