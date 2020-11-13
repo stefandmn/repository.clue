@@ -28,14 +28,21 @@ NEXT_MIN=$(shell python -c "print int($(DISTRO_MIN)) + 1")
 NEXT_VER="${DISTRO_REL}.${DISTRO_MAJ}.${NEXT_MIN}"
 
 
-# Deploy resources (sources and/or system files) into the remote RPI container.
+info:
+	echo -e "\tName:         $(NAME)"
+	echo -e "\tVersion ID:   $(DISTRO_VER)"
+	echo -e "\tPackage File: $(OUTPUT)/targets/$(NAME).zip"
+
+
+# Deploy resources (sources and/or system files) into the remote test RPi device,
+# having Kodi v18* or CLue 2.0 linux OS with all components and packages.
 deploy:
 ifneq ($(RPIHOST),)
 ifeq ($(shell [[ -d $(ROOT)/$(SRCDIR) ]] && echo -n yes),yes)
-	/usr/bin/rsync -a -zvh --progress --delete -e ssh $(ROOT)/$(SRCDIR)/ root@$(RPIHOST):$/clue/.kodi/addons/$(NAME)
+	/usr/bin/rsync -a -zvh --progress --delete -e ssh $(ROOT)/$(SRCDIR)/ root@$(RPIHOST):/clue/.kodi/addons/$(NAME)
 endif
 ifeq ($(shell [[ -d $(ROOT)/$(SYSDIR) ]] && echo -n yes),yes)
-	/usr/bin/scp -r $(ROOT)/$(SYSDIR)/* root@$(RPIHOST):$/clue/
+	/usr/bin/scp -r $(ROOT)/$(SYSDIR)/* root@$(RPIHOST):/clue/
 endif
 else
 	echo "Your remote RPi device should have SSH service enabled, local public SSH key \
@@ -46,9 +53,13 @@ endif
 test: deploy
 
 
+# Mark new revision (addon version) in the development copy
+version:
+	xmlstarlet edit -L -P -u "//addon/@version" -v "$(NEXT_VER)" $(ROOT)/$(SRCDIR)/addon.xml
+
+
 # Build addon package in deployment format
 build:
-	xmlstarlet edit -L -P -u "//addon/@version" -v "$(NEXT_VER)" $(ROOT)/$(SRCDIR)/addon.xml
 	mkdir -p $(OUTDIR) $(OUTDIR)/$(TARGETS)
 	cp -rf ${SRCDIR}/* $(OUTDIR)/
 	cp -rf LICENSE $(OUTDIR)/
@@ -83,17 +94,41 @@ else
 endif
 
 
-# Setup and push the new versioning label in the GitHUB
-version:
+# Commit and push updated files into versioning system (GitHUB). The 'message' input
+# parameter is required.
+gitrev:
+ifneq ($(message),)
 	git add .
-	git commit -m "Release $(DISTRO_VER)"
+	git commit -m "$(message)"
 	git push
+else
+	@printf "\n* Please specify 'message' parameter!\n\n"
+	exit 1
+endif
+
+
+
+# Create and push a new versioning tag equals with the addon release. The uploaded can be
+# done later - manually or through a separate task and thus the tag is transformed into a
+# addon release
+gitrel:
 	git tag "$(DISTRO_VER)"
 	git push origin --tags
 
+# Combine git commit and git release tasks into a single one, the only exception is that
+# the commit doesn't require a message, if the message exist it will be used, if not a
+# standard commit message will be composed using the addon version number
+git:
+ifeq ($(message),)
+	$(MAKE) gitrev -e message="Release $(DISTRO_VER)"
+else
+	$(MAKE) gitrev
+endif
+	$(MAKE) gitrel
+
 
 # Create a complete release: new build, publish it in the repository, update the versioning
-release: build publish version
+release: version build publish git
 
 
 # Clean-up the release
@@ -110,28 +145,49 @@ cleanall:
 help:
 	echo -e "\
 \nSYNOPSIS\n\
-       make deploy | build | publish | version | release\n\
+       make info | deploy | version | build | publish | release\n\
+       make gitrev | gittag | version\n\
        make clean | cleanall\n\
        make help\n\
 \nDESCRIPTION\n\
-    Executes one of the make tasks defined through this Makefile flow, according \n\
+    Executes one of the make targets defined through this Makefile flow, according \n\
     to the scope of this project.\n\n\
+    info\n\
+                  provides main details about current release: package name, version id\n\
+                  and package file (should be found after execution of 'build' target)\n\
+                  >> this is the default target wihin the CCM process\n\
     deploy | test\n\
                   deploy addon resources on a remote test system (RPi device)\n\
+    version\n\
+                  create local new version within local addon descriptor (addon.xml),\n\
+                  the new version being the incremented value fo previous version\n\
+                  (for the minor version number)\n\
     build\n\
-                  build the addon package along to the new version of it\n\
+                  build the addon package along to the new version and prepare the release\n\
+                  package file within location $(OUTPUT)/targets/$(NAME).zip\n\
     publish\n\
                   install/publish the addon (already built) on the repository file\n\
                   system (it has to be already mounted to the development environment)\n\
-    version\n\
-                  Commit the new release changes into GitHub repository\n\
+    release\n\
+                  Build the addon providing new local version, make release and publish it\n\
+                  on the Clue repository (already mounted to the local file system). Then\n\
+                  the released version is submitted in the versioning system (GitHUB) over a\n\
+                  new release tag version\n\
+    gitrev\n\
+                  Commit the new release changes into versioning repository (GitHub)\n\
+    gitrel\n\
+                  Create a new release tag into versioning repository (GitHub) using current\n\
+                  addon version (defined in the addon descriptor - addon.xml file)\n\
+    git\n\
+                  Combine git commit and git release targets into a single one, the only exception\n\
+                  is that the commit doesn't require a message description; in case the message exist\n\
+                  it will be used as such, otherwise a standard commit message will be composed using\n\
+                  the addon version number\n\
     clean\n\
                   cleanup the build resources within the output location\n\
     cleanall\n\
                   Clean-up all resources from the output location (related or nor directly\n\
                   connected to the addon build process\n\
-    release\n\
-                  Build the system release for the current DEVICE\n\
     help\n\
                   Shows this text\n\
 \n\

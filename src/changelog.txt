@@ -1,4 +1,5 @@
 v2.0
+- Update repository location to run over HTTPS
 - Update addon version to be compliant with Kodi 17+
 - Change default location (the new target is amsd.go.ro/clue/repos/addons)
 
