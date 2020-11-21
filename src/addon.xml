@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<addon id="repository.clue" name="Clue Repository" version="2.0.5" provider-name="AMSD">
+<addon id="repository.clue" name="Clue Repository" version="2.0.1" provider-name="AMSD">
 	<extension point="xbmc.addon.repository">
 		<info>https://amsd.go.ro/clue/repos/addons/addons.xml</info>
 		<checksum verify="sha256">https://amsd.go.ro/clue/repos/addons/addons.xml.sha256</checksum>
